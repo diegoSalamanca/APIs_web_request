@@ -35,11 +35,59 @@ public class Network_Manager : MonoBehaviour
             {
                 Texture myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
                 CallBack(myTexture);
+            }           
+        }  
+
+    }
+
+     public static IEnumerator GetTextureData(string url, Action<Texture> CallBack)
+    {
+        using (UnityWebRequest www = UnityWebRequestTexture.GetTexture(url))
+        {
+            var request = www.SendWebRequest(); 
+        
+            while(!request.isDone)            {               
+                
+                yield return null;
+            }   
+
+            
+            if(www.result == UnityWebRequest.Result.ConnectionError)
+            {
+                print(www.result);
             }
-           
-        }
+            else
+            {
+                Texture myTexture = ((DownloadHandlerTexture)www.downloadHandler).texture;
+                CallBack(myTexture);
+            }           
+        }  
+
+    }
+
+    public static IEnumerator GetJson(string url, Action<String> CallBack)
+    {
+        using (UnityWebRequest www = UnityWebRequest.Get(url))
+        {
+            var request = www.SendWebRequest(); 
         
-        
+            while(!request.isDone)
+            {  
+                yield return null;
+            }   
+
+            
+            if(www.result == UnityWebRequest.Result.ConnectionError)
+            {
+                print(www.result);
+                CallBack(www.result.ToString());
+            }
+            else
+            {
+                string jsonResponse = www.downloadHandler.text;
+                CallBack(jsonResponse);
+            }           
+        }  
 
     }
 }
